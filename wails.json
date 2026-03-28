@@ -1,0 +1,19 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "McNetworkChecker",
+  "outputfilename": "McNetworkChecker",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Geoffrey Lecoq"
+  },
+  "info": {
+    "companyName": "Wasabules",
+    "productName": "McNetworkChecker",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2025 Geoffrey Lecoq / Wasabules",
+    "comments": "Minecraft server network diagnostic tool"
+  }
+}

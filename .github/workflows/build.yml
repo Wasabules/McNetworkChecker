@@ -1,0 +1,100 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows/amd64
+            artifact: McNetworkChecker-windows-amd64.exe
+            build_flags: ""
+          - os: macos-latest
+            platform: darwin/universal
+            artifact: McNetworkChecker-macos-universal
+            build_flags: ""
+          - os: ubuntu-latest
+            platform: linux/amd64
+            artifact: McNetworkChecker-linux-amd64
+            build_flags: ""
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Linux: install GTK/WebKit build dependencies
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -platform ${{ matrix.platform }} -clean
+
+      # Rename output for consistent artifact names
+      - name: Rename artifact (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mv build/bin/McNetworkChecker.exe build/bin/${{ matrix.artifact }}
+
+      - name: Rename artifact (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          cd build/bin
+          zip -r ${{ matrix.artifact }}.zip McNetworkChecker.app
+          rm -rf McNetworkChecker.app
+
+      - name: Rename artifact (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mv build/bin/McNetworkChecker build/bin/${{ matrix.artifact }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            build/bin/${{ matrix.artifact }}
+            build/bin/${{ matrix.artifact }}.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            artifacts/**/*
