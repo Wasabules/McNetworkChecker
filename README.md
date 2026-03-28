@@ -136,6 +136,11 @@ MIT License - Copyright (c) 2025
 
 See [LICENSE](LICENSE) for the full text.
 
+## Additionals screenshot
+
+![deploy](assets/deploy.png)
+![result](assets/result.png)
+
 ## Disclaimer
 
 This tool is not affiliated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios. McNetworkChecker is an independent diagnostic tool that uses the publicly documented [Server List Ping](https://wiki.vg/Server_List_Ping) protocol. No game files are included or modified.
