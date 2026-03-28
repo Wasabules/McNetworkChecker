@@ -1,5 +1,7 @@
 # McNetworkChecker
 
+![first](assets/first.png)
+
 A cross-platform desktop application for diagnosing Minecraft server connectivity issues. Runs a full diagnostic pipeline in one click and generates a report you can share with your hosting provider.
 
 Built with [Wails](https://wails.io/) (Go backend + Svelte frontend), Minecraft-themed UI.
