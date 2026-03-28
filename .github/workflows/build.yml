@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+env:
+  NODE_VERSION: '20'
+  GO_VERSION: '1.23'
+
 jobs:
   build:
     strategy:
@@ -16,15 +20,12 @@ jobs:
           - os: windows-latest
             platform: windows/amd64
             artifact: McNetworkChecker-windows-amd64.exe
-            build_flags: ""
           - os: macos-latest
             platform: darwin/universal
             artifact: McNetworkChecker-macos-universal
-            build_flags: ""
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             platform: linux/amd64
             artifact: McNetworkChecker-linux-amd64
-            build_flags: ""
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -34,14 +35,15 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.23'
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
 
       # Linux: install GTK/WebKit build dependencies
+      # Using ubuntu-22.04 which has libwebkit2gtk-4.0-dev available
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
