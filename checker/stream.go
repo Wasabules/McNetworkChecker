@@ -19,6 +19,7 @@ type LogFunc func(string)
 func runCmdStreaming(ctx context.Context, logFn LogFunc, name string, args ...string) (string, error) {
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.WaitDelay = 3 * time.Second // Force-kill if process doesn't exit after cancel
+	hideConsole(cmd)                // Prevent console window flash on Windows
 
 	r, w := io.Pipe()
 	cmd.Stdout = w
